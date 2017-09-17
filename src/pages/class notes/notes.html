@@ -1,0 +1,36 @@
+<ion-header>
+  <ion-navbar color="primary">
+    <ion-title>
+      Classes
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+  <ion-list class="class_list">
+    <ion-item  *ngFor="let course of classes" (click)="getClassDetail(course)" class="classes">
+      <ion-label class="titles">
+        {{course.title}}
+      </ion-label>
+      <ion-label class="location">
+        {{course.location}}
+      </ion-label>
+      <ion-label class="time">
+        {{course.start_time}} - {{course.end_time}}
+      </ion-label>
+      <ion-label class="day">
+        {{course.mon ? "MON" : ""}}
+        {{course.tue ? "TUE" : ""}}
+        {{course.wed ? "WED" : ""}}
+        {{course.thu ? "THU" : ""}}
+        {{course.fri ? "FRI" : ""}}
+        {{course.sat ? "SAT" : ""}}
+        {{course.sun ? "SUN" : ""}}
+      </ion-label>
+      <ion-label class="date">
+        {{course.start_date}} to {{course.end_date}}
+      </ion-label>
+    </ion-item>
+    
+  </ion-list>
+</ion-content>
