@@ -1,6 +1,6 @@
 
 export class ShareService {
-
+    //ShareService.ts for immediate update for class information across the app
     public classes = [];
     public queue = [];
     /*[{

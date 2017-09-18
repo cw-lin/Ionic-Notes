@@ -29,9 +29,9 @@ export class DeleteClassPage {
   private close() {
     this.view.dismiss();
   }
-
+  //Making sure classes are permanently removed in app(Shareservice.ts and SQLite)
   private delete(data) {
-    //TODO SETUP TOGGLE yes/no
+    //Create alert message for last time check(yes/no message)
     this.alertCtrl.create({
       title: "Confirm delete",
       message: "You are about to delete this class!",
@@ -45,6 +45,7 @@ export class DeleteClassPage {
               name: "note",
               location: "default"
             }).then((db: SQLiteObject) => {
+              //Delete class in SQLite
               db.transaction((transaction) => {
                 transaction.executeSql("DROP TABLE IF NOT EXISTS " + data.title.replace(/ /g, "") + "(notes TEXT, date TEXT)", {}, (success) => {
                   alert("table dropped succesfully");

@@ -46,6 +46,7 @@ export class NotesPage {
 
     } else {
 
+      //Check Cordova plugin ran correctly
       if (!this.checkCordova() || !this.checkAudioManager() || !this.checkService()) {
         this.toastCtrl.create({
           message: "Cordova Not Found/Android Plugin failed to load",
@@ -54,37 +55,31 @@ export class NotesPage {
         }).present();
       } else {
         document.addEventListener('deviceready', async () => {
-          //
+
           await this.enableBackgroundMode();
-
-
-
-          //
           await this.initialize();
           await this.scheduleNotification();
           await this.getDatabase();
 
         });
-
       }
     }
-
-
-
   }
+  //Navigation Control viewing class page
   public getClassDetail(course) {
     this.navCtrl.push(AboutPage, { course: course });
   }
-
+  //Soon be removed after implementation of firebase/push notification
   private async enableBackgroundMode() {
     if (!this.backgroundMode.isEnabled()) {
       await this.backgroundMode.enable();
     }
     this.backgroundMode.configure({ silent: true });
-    //Debugging
-    //this.backgroundMode.excludeFromTaskList();
+    //Comment out next line for debugging use only//
+    this.backgroundMode.excludeFromTaskList();
   }
 
+  //Initialize SQLite and its database
   private async getDatabase() {
     await this.sqlite.create({
       name: "note",
@@ -96,18 +91,16 @@ export class NotesPage {
     });
   }
 
+  //General plugin initialization for the app
   protected async initialize() {
-
     if (this.shareService.queue.length == 0) {
       await this.shareService.notificationSetup();
     }
-
     await this.localNotifications.on("click", async (notification, state) => {
       if (state == "background") {
         await this.takePicture();
       }
     });
-
     await this.localNotifications.on("trigger", async (notification, state) => {
       //debugging
       //this.mute();
@@ -122,19 +115,14 @@ export class NotesPage {
 
   }
 
-  //1.0.0
-  //WARNING JAVASCRIPT PROMISE RACE CONDITION
+  //Apache Cordova Camera plugin methods
   private async takePicture() {
-    //this.getClassName();
-
-
     const base64Image = await this.camera.getPicture(this.options).then(
       async (image) => {
-        //data:image/jpeg;base64,
         return await "data:image/jpeg;base64," + image;
       }, async (err) => {
         //Camera Plugin need to remove error callback and let promise do the work
-        console.log(err);
+        //console.log(err);
         this.toastCtrl.create({
           message: "Camera is not available to take pictures",
           duration: 5000,
@@ -146,7 +134,7 @@ export class NotesPage {
         return "";
       });
 
-
+    //Store images with date into the database
     await alert(this.currentClassTitle);
     const getDate = function () {
       return new Date().getMonth().toString() + "/" + new Date().getDate().toString() + "/" + new Date().getFullYear().toString()
@@ -171,6 +159,7 @@ export class NotesPage {
 
   }
 
+  //Local Notification initialization and scheduling
   private async scheduleNotification() {
     let count = await 0;
     await this.localNotifications.clearAll().then().catch();
@@ -179,11 +168,10 @@ export class NotesPage {
       let notificationStartTime = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), parseInt(this.shareService.queue[count].start_time.split(":")[0]), parseInt(this.shareService.queue[count].start_time.split(":")[1]), 0, 0);
       let notificationEndTime = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), parseInt(this.shareService.queue[count].end_time.split(":")[0]), parseInt(this.shareService.queue[count].end_time.split(":")[1]), 0, 0);
 
+      //Schedule notification if the time is in the future
       if (notificationStartTime.getTime() - new Date().getTime() > 0) {
 
-        //schedule notification with given date
         let id = await Math.floor(Math.random() * (1000 - 1) + 1);
-
         await this.localNotifications.schedule({
           title: this.shareService.queue[count].title,
           text: this.shareService.queue[count].start_time + " to " + this.shareService.queue[count].end_time,
@@ -192,15 +180,14 @@ export class NotesPage {
           every: "year",
           id: id
         });
-
         await this.scheduleEndNotification(new Date(), notificationEndTime, id);
       } else if (new Date().getTime() - notificationEndTime.getTime() > 0) {
+        //If Notification date and time has already passed
         count = await count + 1;
         continue;
       } else if (notificationEndTime.getTime() - new Date().getTime() > 0 && new Date().getTime() - notificationStartTime.getTime() > 0) {
-        //Fire notification now
+        //Fire notification now if current time is within class time interval
         let id = await Math.floor(Math.random() * (1000 - 1) + 1);
-        //alert("fire");
         await this.localNotifications.schedule({
           title: this.shareService.queue[count].title,
           text: this.shareService.queue[count].start_time + " to " + this.shareService.queue[count].end_time,
@@ -217,17 +204,15 @@ export class NotesPage {
 
 
   }
-
+  //Soon to be removed after implementation of firebase/push notification
   private scheduleEndNotification(current, endTime, id) {
-    //alert(endTime.getTime() - current.getTime());
     setTimeout(() => {
       this.localNotifications.clear(id);
       this.localNotifications.cancel(id);
     }, endTime.getTime() - current.getTime());
 
   }
-
-
+  //Call audio control android plugin
   private mute() {
     let message;
     window.AndroidVolume.mute((successCallBack) => {
@@ -242,7 +227,7 @@ export class NotesPage {
     });
     toast.present();
   }
-
+  //Call audio control android plugin
   private unmute() {
     let message;
     window.AndroidVolume.restore((successCallBack) => {
@@ -258,14 +243,14 @@ export class NotesPage {
     toast.present();
   }
 
-
+  //Check Cordova plugin installed and run correctly
   public checkCordova() {
     if (typeof cordova != "object") {
       return false;
     }
     return true;
   }
-
+  //Check android plugin installed and run correctly
   public checkAudioManager() {
     var plugins = navigator.plugins;
     var audioManager = plugins.namedItem("AndroidVolume");
@@ -274,7 +259,7 @@ export class NotesPage {
     }
     return true;
   }
-
+  //Check background-mode plugin installed and run correctly
   public checkService() {
     var plugins = navigator.plugins;
     var service = plugins.namedItem("AndroidBackgroundService");

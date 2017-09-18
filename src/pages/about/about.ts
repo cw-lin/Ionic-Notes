@@ -17,6 +17,7 @@ export class AboutPage {
     this.course = navParams.get("course");
     this.getPhotos();
   }
+  //Start showing all photos that was taken and belong to the class
   protected async getPhotos() {
 
     await this.sqlite.create({
@@ -24,9 +25,10 @@ export class AboutPage {
       location: "default",
 
     }).then(async (db: SQLiteObject) => {
-      //TODO: SEPARATION OF DATE
+
       await db.executeSql("SELECT * FROM " + this.course.title.replace(/ /g, "") + " ORDER BY DATE DESC", []).then(async (result) => {
         try {
+          //SQLite template
           //await alert(result.rows.item(0).notes);
           //SQL object -> SQL rows -> SQL (index) -> SQL column name
 
@@ -68,35 +70,3 @@ export class AboutPage {
   }
 
 }
-/*
-<ion-content padding>
-  <ion-list *ngFor="let item of photos">
-    <ion-item>
-      <ion-label>{{item.date}}</ion-label>
-    </ion-item>
-    <ion-grid>
-      <ion-row>
-        <ion-col col-6 *ngFor="let picture of item.pictures">
-          <ion-card class="releative">
-            <img [src]="picture" *ngIf="picture" />
-          </ion-card>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
-  </ion-list>
-
-</ion-content>
-
-
-<ion-grid>
-    <ion-row>
-      <ion-col col-6 *ngFor="let photo of photos">
-        <ion-card class="releative">
-
-          
-          <img [src]="photo" *ngIf="photo" />
-        </ion-card>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
-*/

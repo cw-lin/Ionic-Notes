@@ -23,15 +23,16 @@ export class EditPage {
   ionViewDidLoad() {
     console.log('ionViewDidLoad EditPage');
   }
-
+  //Return to setting page
   private close() {
     this.view.dismiss();
   }
+  //Pull class information and display onto ModalPage
   private viewClass(course) {
+    //TODO Data doesn't show completely, but editing functionality still works
     const editClassModal = this.modal.create("ModalPage", { data: course, pageTitle: "Edit Class" });
     editClassModal.present();
     editClassModal.onDidDismiss(async (data) => {
-
       if (typeof data !== "undefined") {
         this.shareService.editClass(data.oldData);
         this.sqlite.create({

@@ -20,20 +20,6 @@ export class SettingsPage {
   public classes = [];
   public class_key;
   constructor(private modal: ModalController, private toastCtrl: ToastController, private navCtrl: NavController, private navParams: NavParams, private shareService: ShareService, private sqlite: SQLite) {
-    /*
-    this.nativeStorage.keys().then(
-      (keys) => { this.class_key = keys; },
-      (error) => { }
-    );
-    if (typeof (this.class_key) != 'undefined') {
-      for (let key of this.class_key) {
-        this.nativeStorage.getItem(key).then(
-          (item) => this.classes.push(item),
-          (error) => { }
-        );
-      };
-    }
-  */
     this.classes = this.shareService.getClasses();
   }
   private addClass() {
@@ -82,7 +68,7 @@ export class SettingsPage {
 
     });
   }
-
+  //Edit class information from app
   private editClass() {
     const editClassModal = this.modal.create("EditPage", { data: this.classes, pageTitle:"Edit Class" });
     editClassModal.present();
@@ -90,7 +76,7 @@ export class SettingsPage {
 
     });
   }
-
+  //Delete class information from app and SQLite
   private deleteClass() {
     const deleteClassModal = this.modal.create("DeleteClassPage", {});
     deleteClassModal.present();
@@ -117,7 +103,7 @@ export class SettingsPage {
       }
     });
   }
-
+  //Advance option to stop app completely(due to background-mode's exclude-from-task function is enabled)
   private advanceOptions() {
     const advanceOptions = this.modal.create("AdvanceOptionsPage", {});
     advanceOptions.present();
