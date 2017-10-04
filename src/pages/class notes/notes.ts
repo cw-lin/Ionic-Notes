@@ -25,7 +25,7 @@ export class NotesPage {
   private database: SQLiteObject;
   public currentClassTitle: string;
   public options: CameraOptions = {
-    quality: 50,
+    quality: 75,
     destinationType: this.camera.DestinationType.DATA_URL,
     encodingType: this.camera.EncodingType.JPEG,
     mediaType: this.camera.MediaType.PICTURE,
@@ -33,7 +33,7 @@ export class NotesPage {
     saveToPhotoAlbum: false
   };
 
-  private webTesting: boolean = true;
+  private webTesting: boolean = false;
 
 
   constructor(private file: File, private toastCtrl: ToastController, public navCtrl: NavController, public localNotifications: LocalNotifications, private camera: Camera, private sqlite: SQLite, private shareService: ShareService, private navParams: NavParams, private backgroundMode: BackgroundMode) {
@@ -103,7 +103,7 @@ export class NotesPage {
     });
     await this.localNotifications.on("trigger", async (notification, state) => {
       //debugging
-      //this.mute();
+      await this.mute();
       this.currentClassTitle = await notification.title;
       //alert(notification.title);
       //alert(this.currentClassTitle);
@@ -135,22 +135,22 @@ export class NotesPage {
       });
 
     //Store images with date into the database
-    await alert(this.currentClassTitle);
+    //await alert(this.currentClassTitle);
     const getDate = function () {
       return new Date().getMonth().toString() + "/" + new Date().getDate().toString() + "/" + new Date().getFullYear().toString()
     };
     let date = await getDate();
-    await alert(date);
+    //await alert(date);
     await this.database.transaction((transaction) => {
 
       transaction.executeSql("CREATE TABLE IF NOT EXISTS " + this.currentClassTitle.replace(/ /g, "") + "(notes TEXT, date TEXT)", {}, (success) => {
-        alert("table created successfully");
+        //alert("table created successfully");
       }, (error) => {
         alert("table error on create");
       });
       transaction.executeSql("INSERT INTO " + this.currentClassTitle.replace(/ /g, "") + " VALUES (?, ?)", [base64Image, date], (success) => {
-        alert("table inserted successfully");
-        alert(date);
+        //alert("table inserted successfully");
+        //alert(date);
       }, (error) => {
         alert("table error on insert");
       });

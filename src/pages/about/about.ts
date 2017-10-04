@@ -31,7 +31,6 @@ export class AboutPage {
           //SQLite template
           //await alert(result.rows.item(0).notes);
           //SQL object -> SQL rows -> SQL (index) -> SQL column name
-
           let tempDate:string;
           let tempPicArray=[];
           if (typeof tempDate === "undefined") {
@@ -41,6 +40,7 @@ export class AboutPage {
           for (let index = await 0; await index < result.rows.length; await index++) {
             //await alert(result.rows.item(index).date);
             if (await result.rows.item(index).date === tempDate) {
+              
               await tempPicArray.push(result.rows.item(index).notes);
             } else {
               let jsonObj = await { date: tempDate, pictures: tempPicArray };
@@ -51,9 +51,17 @@ export class AboutPage {
             }
 
           }
-          let jsonObj2 = { date: tempDate, pictures: tempPicArray };
-          this.photos.push(jsonObj2);
-          //this.photos.push(result.rows.item(0));
+          if(tempPicArray.length !== 0){
+            let jsonObj = await { date: tempDate, pictures: tempPicArray };
+            await this.photos.push(jsonObj);
+          }
+          //Prevent error for no picture
+          if(typeof tempDate !== "undefined"){
+            let jsonObj2 = { date: tempDate, pictures: tempPicArray };
+            this.photos.push(jsonObj2);
+            this.photos.push(result.rows.item(0));
+          }
+          
         } catch (error) {
           alert(error);
         }

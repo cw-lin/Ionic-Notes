@@ -46,6 +46,19 @@ export class SettingsPage {
     addClassModal.onDidDismiss(async (data) => {
 
       if (typeof data !== "undefined") {
+        
+        let start_year = await data.start_date.substring(0,4);
+        let end_year = await data.end_date.substring(0,4);
+        let start_month = await data.start_date.substring(5,7).replace(/^0+/,'');
+        let end_month = await data.end_date.substring(5,7).replace(/^0+/,'');
+        let start_day = await data.start_date.substring(8,10).replace(/^0+/,'');
+        let end_day = await data.end_date.substring(8,10).replace(/^0+/,'');
+
+
+        data.start_date = await start_month + "-" + start_day + "-" + start_year;
+        data.end_date = await end_month + "-" + end_day + "-" + end_year;
+      
+
 
         this.shareService.addClasses(data);
         this.classes = this.shareService.getClasses();
